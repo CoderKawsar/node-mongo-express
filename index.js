@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -9,9 +10,15 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require("nodemailer");
 const dbConnect = require("./utils/dbConnect");
 const toolsRoutes = require("./routes/v1/tools.route.js");
+const viewCount = require("./middlewares/viewCount");
 
 app.use(cors());
 app.use(express.json());
+
+// app.use(viewCount);
+
+// Apply the rate limiting middleware to all requests
+// app.use(limiter);
 
 dbConnect();
 app.use("/api/v1/tools", toolsRoutes);

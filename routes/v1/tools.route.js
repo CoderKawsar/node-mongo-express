@@ -1,4 +1,7 @@
 const express = require("express");
+const toolsController = require("../../controllers/tools.controller");
+const { limiter } = require("../../middlewares/limiter");
+const viewCount = require("../../middlewares/viewCount");
 
 const router = express.Router();
 
@@ -27,9 +30,7 @@ router
    * @apiError (Unauthorized 401) Unauthorized Only authenticated users can access the data
    * @apiError (Unauthorized 403) Forbidden Only admins can access the data
    */
-  .get((req, res) => {
-    res.send("Tools found!");
-  })
+  .get(toolsController.getAllTools)
   /**
    * @api {post} /tools Save a tool
    * @apiDescription Get all the tools
@@ -45,8 +46,7 @@ router
    * @apiError (Unauthorized 401) Unauthorized Only authenticated users can access the data
    * @apiError (Unauthorized 403) Forbidden Only admins can access the data
    */
-  .post((req, res) => {
-    res.send("Tools added!");
-  });
+  .post(toolsController.addATool);
+router.route("/:id").get(viewCount, limiter, toolsController.getToolDetails);
 
 module.exports = router;
