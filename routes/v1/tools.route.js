@@ -47,6 +47,10 @@ router
    * @apiError (Unauthorized 403) Forbidden Only admins can access the data
    */
   .post(toolsController.addATool);
-router.route("/:id").get(viewCount, limiter, toolsController.getToolDetails);
+router
+  .route("/:id")
+  .get(viewCount, limiter, toolsController.getToolDetails)
+  .patch(toolsController.updateTool)
+  .delete(toolsController.deleteTool);
 
 module.exports = router;

@@ -11,9 +11,11 @@ const nodemailer = require("nodemailer");
 const dbConnect = require("./utils/dbConnect");
 const toolsRoutes = require("./routes/v1/tools.route.js");
 const viewCount = require("./middlewares/viewCount");
+const errorHandler = require("./middlewares/erroeHandler");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 
 // app.use(viewCount);
 
@@ -21,6 +23,7 @@ app.use(express.json());
 // app.use(limiter);
 
 dbConnect();
+
 app.use("/api/v1/tools", toolsRoutes);
 
 async function run() {
@@ -189,13 +192,30 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  // res.sendFile("test.html");
+  res.render("test.ejs", {
+    user: {
+      id: 1,
+      name: "Kawsar Ahmed",
+    },
+  });
 });
 
 app.all("*", (req, res) => {
   res.send("No route found!");
 });
 
+// handle express errors
+app.use(errorHandler);
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
+});
+
+// when error can not be handled, close the app
+process.on("unhandledRejection", (error) => {
+  console.log(error.name, error.message);
+  app.close(() => {
+    process.exit(1);
+  });
 });
